@@ -1,3 +1,14 @@
 {
-    "message": "siema"
+    "simulator": {
+        "class": "asyncrl.simulator.KarpathyGame",
+        "settings": {
+
+        }
+    },
+    "model": {
+        "class": "asyncrl.model.MLP",
+        "settings": {
+
+        }
+    }
 }
