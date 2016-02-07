@@ -3,7 +3,7 @@ class MLP(object):
         pass
 
     def action(self, STATE):
-        pass
+        return [1,]
 
     def update_grads(self, R, s, a):
         pass

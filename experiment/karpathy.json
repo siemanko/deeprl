@@ -1,8 +1,37 @@
 {
     "simulator": {
-        "class": "asyncrl.simulator.KarpathyGame",
+        "class": "asyncrl.simulator.colliding_marbles.KarpathyGame",
         "settings": {
-
+          "fps": 30,
+          "frames_between_actions": 3,
+          "max_frames": 600,
+          "size": 500,
+          "colors": {
+              "hero": "yellow",
+              "red":  "red",
+              "blue": "blue",
+              "green": "green",
+              "orange": "orange"
+          },
+          "restitution": 0.6,
+          "viscosity": 0.97,
+          "observable_distance": 0.4,
+          "num_observation_lines": 32,
+          "observable_objects": [
+              "red",
+              "blue",
+              "green",
+              "orange",
+              "wall"
+          ],
+          "action_acc": [
+              [0.0,   0.0],
+              [-0.1, 0.0],
+              [0.1,  0.0],
+              [0.0,   -0.1],
+              [0.0,   0.1]
+          ],
+          "obj_radius": 0.045
         }
     },
     "model": {

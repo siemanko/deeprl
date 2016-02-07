@@ -24,7 +24,7 @@ def create_recording(experiment, dir_name):
 
     reward = 0.0
     while reward is not None:
-        state = simulator.get_state()
+        state  = simulator.get_state()
         action = model.action(state)
         reward = simulator.take_action(action)
 

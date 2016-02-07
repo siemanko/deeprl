@@ -18,5 +18,3 @@ class Simulator(...):
         it should assert that record was passed as true in __init__
         save_recording of current execution in a directory named dir
 """
-
-from .karpathy_game import KarpathyGame
