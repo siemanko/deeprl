@@ -21,4 +21,4 @@ class Model(...):
     def load(self, directory)
 """
 
-from .mlp import MLP
+from .enc_dec import EncDec
