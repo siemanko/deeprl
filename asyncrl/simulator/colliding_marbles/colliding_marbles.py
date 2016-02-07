@@ -85,8 +85,29 @@ class Simulator(object):
         self.viscosity   = self.settings["viscosity"]
         self.game_time_passed = 0.0
 
-    def add(self, obj):
+        self.collision_observer = lambda x, y: True
+
+    def add(self, obj, randomize_position=False, ensure_noncolliding=False):
         self.objects.append(obj)
+
+        gen = lambda: random.uniform(obj.radius, 1.0 - obj.radius)
+        if randomize_position:
+            obj.position = Point2(gen(), gen())
+
+        if ensure_noncolliding:
+            while any(objects_colliding(obj, other)
+                      for other in self.objects if other is not obj):
+                obj.position = Point2(gen(), gen())
+
+    def remove(self, obj):
+        self.objects.remove(obj)
+
+    def randomize_position(self, obj, noncoliding=True, margin=0.0):
+        gen = lambda: random.uniform(obj.radius + margin, 1.0 - obj.radius - margin)
+        obj.position = Point2(gen(), gen())
+
+        while noncoliding and any(objects_colliding(obj, other) for other in self.objects if other is not obj):
+            obj.position = Point2(gen(), gen())
 
     def step(self, dt):
         """Simulate all the objects for a given ammount of time.
@@ -102,12 +123,13 @@ class Simulator(object):
 
         for obj1, obj2 in combinations(self.objects, 2):
             if objects_colliding(obj1, obj2) or objects_will_collide(obj1, obj2, dt):
-                obj1.speed, obj2.speed = (
-                    speed_after_collision(obj1, obj2, self.restitution),
-                    speed_after_collision(obj2, obj1, self.restitution),
-                )
-            if objects_colliding(obj1, obj2):
-                correct_penetration(obj1, obj2)
+                if self.collision_observer(obj1, obj2):
+                    obj1.speed, obj2.speed = (
+                        speed_after_collision(obj1, obj2, self.restitution),
+                        speed_after_collision(obj2, obj1, self.restitution),
+                    )
+                    if objects_colliding(obj1, obj2):
+                        correct_penetration(obj1, obj2)
 
         self.game_time_passed += dt
 
@@ -172,8 +194,12 @@ class HeroSimulator(Simulator):
             result.append( LineSegment2(current_start, current_end))
         return result
 
-    def add(self, obj):
-        super(HeroSimulator, self).add(obj)
+    def add(self, *args, **kwargs):
+        super(HeroSimulator, self).add(*args, **kwargs)
+        self.update_observation_lines()
+
+    def remove(self, *args, **kwargs):
+        super(HeroSimulator, self).remove(*args, **kwargs)
         self.update_observation_lines()
 
     def observe(self):

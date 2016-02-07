@@ -9,29 +9,32 @@
           "colors": {
               "hero": "yellow",
               "red":  "red",
-              "blue": "blue",
-              "green": "green",
-              "orange": "orange"
+              "green": "green"
           },
-          "restitution": 0.6,
-          "viscosity": 0.97,
-          "observable_distance": 0.4,
+          "restitution": 0.95,
+          "viscosity": 1.0,
+          "observable_distance": 0.25,
           "num_observation_lines": 32,
           "observable_objects": [
               "red",
-              "blue",
-              "green",
-              "orange",
-              "wall"
+              "green"
           ],
+          "num_objects": {
+              "red":   15,
+              "green": 15
+          },
+          "object_reward": {
+              "red":    1,
+              "green": -1
+          },
           "action_acc": [
-              [0.0,   0.0],
-              [-0.1, 0.0],
-              [0.1,  0.0],
+              [0.0,    0.0],
+              [-0.1,   0.0],
+              [0.1,    0.0],
               [0.0,   -0.1],
-              [0.0,   0.1]
+              [0.0,    0.1]
           ],
-          "obj_radius": 0.045
+          "obj_radius": 0.03
         }
     },
     "model": {

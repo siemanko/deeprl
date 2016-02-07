@@ -1,10 +1,11 @@
 import os
+import random
 import subprocess
 
-from euclid import Vector2
+from euclid import Vector2, Point2
 from progress.bar import Bar
 
-from .colliding_marbles import HeroSimulator
+from .colliding_marbles import HeroSimulator, GameObject
 
 class KarpathyGame(object):
     def __init__(self, settings, record=False):
@@ -12,14 +13,49 @@ class KarpathyGame(object):
         self.fps                    = settings["fps"]
         self.frames_between_actions = settings["frames_between_actions"]
         self.max_frames             = settings["max_frames"]
+        self.obj_radius             = settings["obj_radius"]
 
         self.sim = HeroSimulator(settings)
         self.num_frames = 1
 
         self.actions = [Vector2(*a) for a in settings["action_acc"]]
 
+        for obj_type, num_items in settings["num_objects"].items():
+            for _ in range(num_items):
+                self.spawn_object(obj_type)
+        self.rewards = settings["object_reward"]
+
         if self.record:
             self.recording = [self.sim.to_svg()]
+
+        self.sim.collision_observer = lambda x,y: self.handle_collision(x,y)
+
+        self.partial_reward = 0.0
+        self.metrics = {
+            'score': 0.
+        }
+
+    def handle_collision(self, x, y):
+        if y is self.sim.hero:
+            x, y = y, x
+
+        if x is self.sim.hero:
+            assert y is not self.sim.hero
+            self.partial_reward += self.rewards[y.obj_type]
+            self.sim.remove(y)
+            self.spawn_object(y.obj_type)
+
+            return False
+
+        return True
+
+    def spawn_object(self, obj_type):
+        speed = Vector2(random.gauss(0., 0.2), random.gauss(0., 0.2))
+        self.sim.add(GameObject(Point2(0.,0.), speed,
+                 obj_type,
+                 radius=self.obj_radius),
+                 ensure_noncolliding=True,
+                 randomize_position=True)
 
     def get_state(self):
         return self.sim.observe()
@@ -33,7 +69,9 @@ class KarpathyGame(object):
             if self.record:
                 self.recording.append(self.sim.to_svg())
 
-        reward = 0.0
+        reward = self.partial_reward
+        self.metrics['score'] += reward
+        self.partial_reward = 0.
 
         if self.num_frames >= self.max_frames:
             return None
@@ -41,7 +79,7 @@ class KarpathyGame(object):
             return reward
 
     def evaluation_metrics(self):
-        pass
+        return self.metrics
 
     def save_recording(self, directory):
         assert self.record, "To create a recording pass record=True to the constructor."
