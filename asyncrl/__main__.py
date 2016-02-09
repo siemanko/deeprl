@@ -3,21 +3,32 @@ import json
 import os
 import sys
 import tempfile
+import tensorflow as tf
 
 from .utils import import_class
 
-def init_experiment(experiment, record=False):
-    simulator_class = import_class(experiment['simulator']['class'])
-    simulator       = simulator_class(experiment['simulator']['settings'], record)
+def init_experiment(settings, session, record=False):
+    simulator_class = import_class(settings['simulator']['class'])
+    simulator       = simulator_class(settings['simulator']['settings'], record)
 
-    model_class = import_class(experiment['model']['class'])
-    model       = model_class(experiment['model']['settings'])
+    model_class = import_class(settings['model']['class'])
+    model       = model_class(settings['model']['settings'], session)
 
     return model, simulator
 
-def create_recording(experiment, dir_name):
-    model, simulator = init_experiment(experiment, record=True)
+def make_session(max_cpu_cores=None):
+    """Makes a multi-core session.
+    If max_cpu_cores is None, it adopts the number of cores
+    automatically
+    """
+    config = tf.ConfigProto()
 
+    if max_cpu_cores is not None:
+        configdevice_count.update({'CPU': max_cpu_cores})
+
+    return tf.Session(config=config)
+
+def create_recording(model, simulator, dir_name):
     reward = 0.0
     while reward is not None:
         state  = simulator.get_state()
@@ -43,12 +54,15 @@ def parse_args():
 
 def main(args):
     with open(args.experiment) as f:
-        experiment = json.load(f)
+        settings = json.load(f)
 
     if args.mode == 'record':
         dir_name = tempfile.mkdtemp(prefix="recording_", dir=os.getcwd())
         print ("Recording will be saved at:\n%s\n" % (dir_name,), flush=True)
-        create_recording(experiment, dir_name)
+
+        session = make_session() # parallel session
+        model, simulator = init_experiment(settings, session, record=True)
+        create_recording(model, simulator, dir_name)
     elif args.mode == 'train':
         print("Training")
     else:

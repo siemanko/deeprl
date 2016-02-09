@@ -60,6 +60,10 @@
                 "hiddens":     [1],
                 "nonlinearities": ["identity"],
                 "scope": "value_decoder"
+            },
+            "action": {
+                "type": "discrete",
+                "num_actions": 5
             }
         }
     }

@@ -19,6 +19,12 @@ NONLINEARITIES = {
     'softmax': tf.nn.softmax,
 }
 
+def ensure_list(sth):
+    if isinstance(sth, (list, tuple)):
+        return sth
+    else:
+        return [sth]
+
 class Layer(object):
     def __init__(self, input_sizes, output_size, scope):
         """Cretes a neural network layer."""
@@ -72,8 +78,9 @@ class MLP(object):
         return MLP(input_sizes, hiddens, nonlinearities, scope=scope)
 
     def __init__(self, input_sizes, hiddens, nonlinearities, scope=None, given_layers=None):
-        self.input_sizes = input_sizes
-        self.hiddens = hiddens
+        self.input_sizes = ensure_list(input_sizes)
+        self.hiddens     = ensure_list(hiddens)
+        nonlinearities = ensure_list(nonlinearities)
         self.input_nonlinearity, self.layer_nonlinearities = nonlinearities[0], nonlinearities[1:]
         self.scope = scope or "MLP"
 
@@ -90,6 +97,12 @@ class MLP(object):
 
                 for l_idx, (h_from, h_to) in enumerate(zip(hiddens[:-1], hiddens[1:])):
                     self.layers.append(Layer(h_from, h_to, scope="hidden_layer_%d" % (l_idx,)))
+
+    def input_placeholder(self):
+        if len(self.input_sizes) == 1:
+            return tf.placeholder(tf.float32, (None, self.input_sizes[0]))
+        else:
+            return [tf.placeholder(tf.float32, (None, ins)) for ins in self.input_sizes]
 
     def __call__(self, xs):
         if type(xs) != list:

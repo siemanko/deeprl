@@ -3,9 +3,9 @@
 Every model that the algorithm can use is required to implement the following API:
 
 class Model(...):
-    def __init__(self, settings) -> None
+    def __init__(self, settings, session) -> None
         initialize using model settings
-
+        session is a tensorflow session to use
     def action(self, STATE) -> ACTION
     def value(self, STATE) -> NUMBER
 
