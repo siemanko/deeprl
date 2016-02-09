@@ -15,3 +15,18 @@ def import_class(path):
     for name in path_split[1:]:
         module_or_class = getattr(module_or_class, name)
     return module_or_class
+
+
+def nps_to_bytes(arrays):
+    memfile = BytesIO()
+    memfile.write(('%d\n' % (len(arrays),)).encode('ascii'))
+    for a in arrays:
+        np.save(memfile, a)
+    memfile.seek(0)
+    b = memfile.read()
+    return b
+
+def bytes_to_nps(b):
+    memfile = BytesIO(b)
+    n_arrays = int(memfile.readline())
+    return [np.load(memfile) for _ in range(n_arrays)]
