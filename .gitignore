@@ -1,3 +1,6 @@
 .ipynb_checkpoints/
 *.pyc
 *.pyo
+.tags
+.tags1
+recording_*/

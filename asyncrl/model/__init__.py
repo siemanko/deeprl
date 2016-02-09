@@ -9,13 +9,13 @@ class Model(...):
     def action(self, STATE) -> ACTION
     def value(self, STATE) -> NUMBER
 
-    def update_grads(self, R, s, a) -> None
-    def get_grads(self) -> GRADS
-    def reset_grads(self)
+    def update_gradients(self, R, s, a) -> None
+    def eval_gradients(self) -> GRADS
+    def reset_gradients(self)
 
-    def apply_grads(self, GRADS)
-    def get_params(self) -> PARAMS
-    def set_params(self, PARAMS)
+    def apply_gradients(self, GRADS)
+    def eval_parameters(self) -> PARAMS
+    def set_parameters(self, PARAMS)
 
     def save(self, directory)
     def load(self, directory)
