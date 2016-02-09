@@ -12,6 +12,13 @@ def parse_block(settings):
     block_class = import_class(class_name)
     return block_class.parse(settings)
 
+def parse_optimizer(settings):
+    class_name = settings["class"]
+    if '.' not in class_name:
+        class_name = 'tensorflow.train.%s' % (class_name,)
+    optimizer_class = import_class(class_name)
+    return optimizer_class(**settings["kwargs"])
+
 NONLINEARITIES = {
     'tanh': tf.tanh,
     'sigmoid': tf.sigmoid,

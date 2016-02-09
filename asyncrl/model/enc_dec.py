@@ -1,8 +1,11 @@
 import tensorflow as tf
 import random
 
-from .blocks import parse_block, SequenceWrapper
-
+from .blocks import (
+    parse_block,
+    parse_optimizer,
+    SequenceWrapper,
+)
 class EncDec(object):
     def __init__(self, settings, session):
         self.s = session
@@ -17,20 +20,39 @@ class EncDec(object):
         self.s.run(tf.initialize_variables(self.variables()))
 
     def create_variables(self, settings):
-        self.state_encoder  = parse_block(settings['state_encoder'])
-        self.action_decoder = parse_block(settings['action_decoder'])
-        self.value_decoder  = parse_block(settings['value_decoder'])
+        self.network_names = [
+            'state_encoder',
+            'action_decoder',
+            'value_decoder',
+        ]
 
-        self.action_network = SequenceWrapper([self.state_encoder, self.action_decoder],
-                                              scope="action_network")
-        self.value_network  = SequenceWrapper([self.state_encoder, self.value_decoder],
-                                              scope="value_network")
+        self.networks = {
+            name:parse_block(settings['networks'][name])
+            for name in self.network_names
+        }
 
-        self.state        = self.state_encoder.input_placeholder()
+        self.optimizers   = {
+            name:parse_optimizer(settings['optimizers'][name])
+            for name in self.network_names
+        }
+
+
+        self.action_network = SequenceWrapper(
+            [self.networks["state_encoder"], self.networks["action_decoder"]],
+            scope="action_network")
+
+        self.value_network = SequenceWrapper(
+            [self.networks["state_encoder"], self.networks["value_decoder"]],
+            scope="value_network")
+
+        self.state        = self.networks["state_encoder"].input_placeholder()
         self.action_probs = self.action_network(self.state)
         self.action_id    = tf.argmax(self.action_probs, dimension=1)
 
         self.value        =  self.value_network(self.state)
+
+
+
 
     def action(self, state, exploration=0.0):
         if random.random() < exploration:
@@ -52,11 +74,10 @@ class EncDec(object):
         pass
 
     def variables(self):
-        return (
-            self.state_encoder.variables() +
-            self.action_decoder.variables() +
-            self.value_decoder.variables()
-        )
+        result = []
+        for n in self.network_names:
+            result.extend(self.networks[n].variables())
+        return result
 
     def get_params(self):
         pass

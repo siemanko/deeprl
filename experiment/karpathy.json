@@ -40,30 +40,52 @@
     "model": {
         "class": "asyncrl.model.EncDec",
         "settings": {
-            "state_encoder": {
-                "class": "MLP",
-                "input_sizes": [192],
-                "hiddens":     [100],
-                "nonlinearities": ["sigmoid"],
-                "scope": "state_encoder"
-            },
-            "action_decoder": {
-                "class": "MLP",
-                "input_sizes": [100],
-                "hiddens":     [5],
-                "nonlinearities": ["softmax"],
-                "scope": "action_decoder"
-            },
-            "value_decoder": {
-                "class": "MLP",
-                "input_sizes": [100],
-                "hiddens":     [1],
-                "nonlinearities": ["identity"],
-                "scope": "value_decoder"
+            "networks": {
+                "state_encoder": {
+                    "class": "MLP",
+                    "input_sizes": [192],
+                    "hiddens":     [100],
+                    "nonlinearities": ["sigmoid"],
+                    "scope": "state_encoder"
+                },
+                "action_decoder": {
+                    "class": "MLP",
+                    "input_sizes": [100],
+                    "hiddens":     [5],
+                    "nonlinearities": ["softmax"],
+                    "scope": "action_decoder"
+                },
+                "value_decoder": {
+                    "class": "MLP",
+                    "input_sizes": [100],
+                    "hiddens":     [1],
+                    "nonlinearities": ["identity"],
+                    "scope": "value_decoder"
+                }
             },
             "action": {
                 "type": "discrete",
                 "num_actions": 5
+            },
+            "optimizers": {
+                "state_encoder": {
+                    "class": "GradientDescentOptimizer",
+                    "kwargs": {
+                        "learning_rate": 0.005
+                    }
+                },
+                "action_decoder": {
+                    "class": "GradientDescentOptimizer",
+                    "kwargs": {
+                        "learning_rate": 0.01
+                    }
+                },
+                "value_decoder": {
+                    "class": "GradientDescentOptimizer",
+                    "kwargs": {
+                        "learning_rate": 0.01
+                    }
+                }
             }
         }
     }
