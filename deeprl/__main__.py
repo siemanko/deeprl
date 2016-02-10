@@ -45,7 +45,7 @@ def add_boolean_flag(parser, name, default):
     parser.set_defaults(**{name:default})
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Asynchronous Deep Reinforcement Learning training procedure.')
+    parser = argparse.ArgumentParser(description='Deep Reinforcement Learning.')
 
     parser.add_argument('--experiment', '-e', type=str, required=True, help="Location of json file which specifies the experiment")
     parser.add_argument('--mode',       '-m', type=str, default="train", choices=["train", "record"], help="What should we do today? Train? Record execution trace?")

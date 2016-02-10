@@ -1,6 +1,6 @@
 {
     "simulator": {
-        "class": "asyncrl.simulator.colliding_marbles.KarpathyGame",
+        "class": "deeprl.simulator.colliding_marbles.KarpathyGame",
         "settings": {
           "fps": 30,
           "frames_between_actions": 3,
@@ -38,7 +38,7 @@
         }
     },
     "model": {
-        "class": "asyncrl.model.EncDec",
+        "class": "deeprl.model.EncDec",
         "settings": {
             "networks": {
                 "state_encoder": {

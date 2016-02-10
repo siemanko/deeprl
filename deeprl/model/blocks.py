@@ -2,13 +2,13 @@ import math
 import tensorflow as tf
 
 
-from asyncrl.utils import import_class
+from deeprl.utils import import_class
 
 
 def parse_block(settings):
     class_name = settings["class"]
     if '.' not in class_name:
-        class_name = 'asyncrl.model.blocks.%s' % (class_name,)
+        class_name = 'deeprl.model.blocks.%s' % (class_name,)
     block_class = import_class(class_name)
     return block_class.parse(settings)
 
