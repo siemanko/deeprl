@@ -88,32 +88,6 @@ class EncDec(object):
             self.update_network_grads('value_decoder', self.value_loss),
         ])
 
-        #### OP TO RESET GRADIENTS
-        self.reset_gradients_op = tf.group(*[tf.assign(g, g.initialized_value())
-                                             for g in self.gradients() ])
-
-        #### SET GRADIENTS
-        self.gradient_placeholders = [tf.placeholder(tf.float32)
-                                      for _ in self.gradients()]
-        self.set_gradients_op = tf.group(*[
-            tf.assign(g, gp)
-            for g, gp in zip(self.gradients(), self.gradient_placeholders)
-        ])
-
-        ### SET PARAMETERS
-        self.variable_placeholders = [tf.placeholder(tf.float32)
-                                      for _ in self.variables()]
-        self.set_variables_op = tf.group(*[
-            tf.assign(g, gp)
-            for g, gp in zip(self.variables(), self.variable_placeholders)
-        ])
-
-        ### APPLY GRADIENTS USING OPTIMIZERS
-        self.apply_gradients_op = tf.group(*[
-            self.apply_network_gradients(n)
-            for n in self.network_names
-        ])
-
     def variables(self):
         result = []
         for n in self.network_names:
@@ -125,11 +99,6 @@ class EncDec(object):
         for n in self.network_names:
             result.extend(self.net_grads[n])
         return result
-
-    def apply_network_gradients(self, network):
-        grad_values = [g.value() for g in self.net_grads[network]]
-        grad_var = list(zip(grad_values, self.networks[network].variables()))
-        return self.optimizers[network].apply_gradients(grad_var)
 
     def update_network_grads(self, network, loss):
         partial_grads = tf.gradients(loss, self.networks[network].variables())
@@ -160,38 +129,3 @@ class EncDec(object):
             self.state: state,
             self.reward: R
         })
-
-    def eval_gradients(self):
-        result = []
-        for g in self.gradients():
-            result.append(self.s.run(g))
-        return result
-
-    def reset_gradients(self):
-        self.s.run(self.reset_gradients_op)
-
-    def apply_gradients(self, gradient_values):
-        self.s.run(self.set_gradients_op, {
-            gp: gv
-            for gp,gv in zip(self.gradient_placeholders, gradient_values)
-        })
-
-        self.s.run(self.apply_gradients_op)
-
-    def eval_parameters(self):
-        result = []
-        for g in self.variables():
-            result.append(self.s.run(g))
-        return result
-
-    def set_parameters(self, parameter_values):
-        self.s.run(self.set_variables_op, {
-            gp: gv
-            for gp,gv in zip(self.variable_placeholders, parameter_values)
-        })
-
-    def save(self, directory):
-        raise NotImplemented()
-
-    def load(self, directory):
-        raise NotImplemented()

@@ -10,15 +10,17 @@ class Model(...):
     def value(self, STATE) -> NUMBER
 
     def update_gradients(self, R, s, a) -> None
-    def eval_gradients(self) -> GRADS
-    def reset_gradients(self)
 
-    def apply_gradients(self, GRADS)
-    def eval_parameters(self) -> PARAMS
-    def set_parameters(self, PARAMS)
+    def variables(self)
+    def gradients(self)
 
-    def save(self, directory)
-    def load(self, directory)
+                            # def reset_gradients(self)
+                            # def eval_gradients(self) -> GRADS
+                            # def apply_gradients(self, GRADS)
+                            # def eval_parameters(self) -> PARAMS
+                            # def set_parameters(self, PARAMS)
+                            # def save(self, directory)
+                            # def load(self, directory)
 """
 
 from .enc_dec import EncDec

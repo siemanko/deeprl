@@ -3,39 +3,13 @@ import json
 import os
 import sys
 import tempfile
-import tensorflow as tf
+import time
 
-from .utils import import_class
+from .parallel import parallel_mode
+from .record import record_mode
+from .serial import serial_mode
+from .settings import DEFAULT_SETTINGS, update_settings
 
-def init_experiment(settings, session, record=False):
-    simulator_class = import_class(settings['simulator']['class'])
-    simulator       = simulator_class(settings['simulator']['settings'], record)
-
-    model_class = import_class(settings['model']['class'])
-    model       = model_class(settings['model']['settings'], session)
-
-    return model, simulator
-
-def make_session(max_cpu_cores=None):
-    """Makes a multi-core session.
-    If max_cpu_cores is None, it adopts the number of cores
-    automatically
-    """
-    config = tf.ConfigProto()
-
-    if max_cpu_cores is not None:
-        configdevice_count.update({'CPU': max_cpu_cores})
-
-    return tf.Session(config=config)
-
-def create_recording(model, simulator, dir_name):
-    reward = 0.0
-    while reward is not None:
-        state  = simulator.get_state()
-        action = model.action(state)
-        reward = simulator.take_action(action)
-
-    simulator.save_recording(dir_name)
 
 
 def add_boolean_flag(parser, name, default):
@@ -47,24 +21,40 @@ def add_boolean_flag(parser, name, default):
 def parse_args():
     parser = argparse.ArgumentParser(description='Deep Reinforcement Learning.')
 
-    parser.add_argument('--experiment', '-e', type=str, required=True, help="Location of json file which specifies the experiment")
-    parser.add_argument('--mode',       '-m', type=str, default="train", choices=["train", "record"], help="What should we do today? Train? Record execution trace?")
+    parser.add_argument('--experiment', '-e', type=str, required=True,
+            help="Location of json file which specifies the experiment")
+    parser.add_argument('--mode',       '-m', type=str, default="train",
+            choices=["parallel", "serial", "distributed", "record"],
+            help="What should we do today? Train? Record execution trace?")
+    parser.add_argument('--savedir',    '-s', type=str, default=None,
+            help="Where to store the data related to the experiment. If the same folder is used multiple times the experiment will be resumed.")
 
     return parser.parse_args()
 
+
+
+def parse_savedir(args, settings):
+    savedir = args.savedir
+    if savedir is None:
+        savedir = tempfile.mkdtemp(prefix="saved_", dir=os.getcwd())
+    print ("Results will be saved at %s." % (savedir))
+    if not os.path.exists(savedir):
+        os.mkdir(savedir)
+    settings['__runtime__']['savedir'] = savedir
+
 def main(args):
+    settings = DEFAULT_SETTINGS
     with open(args.experiment) as f:
-        settings = json.load(f)
+        settings = update_settings(settings, json.load(f))
+    settings['__runtime__'] = {}
+    parse_savedir(args, settings)
 
     if args.mode == 'record':
-        dir_name = tempfile.mkdtemp(prefix="recording_", dir=os.getcwd())
-        print ("Recording will be saved at:\n%s\n" % (dir_name,), flush=True)
-
-        session = make_session() # parallel session
-        model, simulator = init_experiment(settings, session, record=True)
-        create_recording(model, simulator, dir_name)
-    elif args.mode == 'train':
-        print("Training")
+        record_mode(settings)
+    elif args.mode == 'parallel':
+        parallel_mode(settings)
+    elif args.mode == 'serial':
+        serial_mode(settings)
     else:
         assert False
 

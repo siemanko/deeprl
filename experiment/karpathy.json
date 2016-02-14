@@ -1,4 +1,7 @@
 {
+    "training": {
+         "num_workers": 1
+    },
     "simulator": {
         "class": "deeprl.simulator.colliding_marbles.KarpathyGame",
         "settings": {

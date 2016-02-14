@@ -4,3 +4,7 @@
 .tags
 .tags1
 recording_*/
+build/
+
+MANIFEST
+dist/
