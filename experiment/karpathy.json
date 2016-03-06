@@ -2,7 +2,13 @@
     "training": {
          "num_workers": 1,
          "steps_before_update": 5,
-         "gamma": 0.9
+         "gamma": 0.9,
+         "save_every_s": 120,
+         "keep_old_saves": false
+    },
+    "evaluation": {
+         "time_between_evaluations": 120,
+         "runs_per_evaluation": 3
     },
     "simulator": {
         "class": "deeprl.simulator.colliding_marbles.KarpathyGame",

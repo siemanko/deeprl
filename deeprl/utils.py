@@ -1,5 +1,5 @@
 import tensorflow as tf
-
+import os
 
 def import_class(path):
     path_split = path.split('.')
@@ -33,6 +33,10 @@ def bytes_to_nps(b):
     memfile = BytesIO(b)
     n_arrays = int(memfile.readline())
     return [np.load(memfile) for _ in range(n_arrays)]
+
+def ensure_directory(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 def init_experiment(settings, session):
     def make_simulator(record=False):

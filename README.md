@@ -13,3 +13,7 @@ Python modules:
 Command line utilities
 - `ffmpeg`
 - `rsvg-convert`
+
+## Future work
+
+- evalution metrics stored in relative experiment time

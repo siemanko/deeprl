@@ -11,6 +11,16 @@ def create_recording(model, make_simulator, dir_name):
 
     simulator.save_recording(dir_name)
 
+def capture_metrics(model, make_simulator):
+    simulator = make_simulator()
+    state  = simulator.get_state()
+    while state is not None:
+        action = model.action(state)
+        _ = simulator.take_action(action)
+        state = simulator.get_state()
+
+    return simulator.evaluation_metrics()
+
 def record_mode(settings):
     session = make_session() # parallel session
     model, make_simulator = init_experiment(settings, session)
