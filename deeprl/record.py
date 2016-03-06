@@ -1,16 +1,17 @@
 from .utils import init_experiment, make_session
 
 
-def create_recording(model, simulator, dir_name):
-    reward = 0.0
-    while reward is not None:
-        state  = simulator.get_state()
+def create_recording(model, make_simulator, dir_name):
+    simulator = make_simulator(record=True)
+    state  = simulator.get_state()
+    while state is not None:
         action = model.action(state)
-        reward = simulator.take_action(action)
+        _ = simulator.take_action(action)
+        state = simulator.get_state()
 
     simulator.save_recording(dir_name)
 
 def record_mode(settings):
     session = make_session() # parallel session
-    model, simulator = init_experiment(settings, session, record=True)
-    create_recording(model, simulator, settings['__runtime__']['savedir'])
+    model, make_simulator = init_experiment(settings, session)
+    create_recording(model, make_simulator, settings['__runtime__']['savedir'])

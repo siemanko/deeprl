@@ -58,7 +58,10 @@ class KarpathyGame(object):
                  randomize_position=True)
 
     def get_state(self):
-        return self.sim.observe()
+        if self.num_frames >= self.max_frames:
+            return None
+        else:
+            return self.sim.observe()
 
     def take_action(self, a):
         self.sim.hero.speed += self.actions[a[0]]
@@ -66,17 +69,14 @@ class KarpathyGame(object):
         for _ in range(self.frames_between_actions):
             self.sim.step(1.0 / self.fps)
             self.num_frames += 1
-            if self.record:
+            if self.record and self.num_frames <= self.max_frames:
                 self.recording.append(self.sim.to_svg())
 
         reward = self.partial_reward
         self.metrics['score'] += reward
         self.partial_reward = 0.
 
-        if self.num_frames >= self.max_frames:
-            return None
-        else:
-            return reward
+        return reward
 
     def evaluation_metrics(self):
         return self.metrics

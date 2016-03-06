@@ -21,6 +21,9 @@ class EncDec(object):
         self.s.run(tf.initialize_variables(self.variables()))
         self.s.run(tf.initialize_variables(self.gradients()))
 
+    def get_session(self):
+        return self.s
+
     def create_variables(self, settings):
         self.network_names = [
             'state_encoder',
@@ -31,12 +34,6 @@ class EncDec(object):
         #### CREATE ALL THE NETWORKS
         self.networks = {
             name:parse_block(settings['networks'][name])
-            for name in self.network_names
-        }
-
-        #### CREATE ALL THE OPTIMIZERS
-        self.optimizers   = {
-            name:parse_optimizer(settings['optimizers'][name])
             for name in self.network_names
         }
 
@@ -63,14 +60,13 @@ class EncDec(object):
         self.action_probs = self.action_network(self.state)
         self.action_id    = tf.argmax(self.action_probs, dimension=1)
 
-        self.value        =  self.value_network(self.state)
-
+        self.state_value        =  tf.reduce_sum(self.value_network(self.state), 1)
 
         #### COMPUTE ACTOR UPDATE
         self.reward             = tf.placeholder(tf.float32, (None,))
         self.chosen_action_id   = tf.placeholder(tf.int64, (None,))
 
-        self.advantage          = self.reward - tf.stop_gradient(self.value)
+        self.advantage          = self.reward - tf.stop_gradient(self.state_value)
         self.onehot             = tf.constant(np.diag(
                 np.ones((self.num_actions,), dtype=np.float32)))
         self.chosen_action_mask = tf.nn.embedding_lookup(self.onehot, self.chosen_action_id)
@@ -82,7 +78,7 @@ class EncDec(object):
         ])
 
         #### COMPUTE VALUE NETWORK UPDATE
-        self.value_loss         = tf.square(self.reward - self.value)
+        self.value_loss         = tf.square(self.reward - self.state_value)
         self.update_value_grads = tf.group(*[
             self.update_network_grads('state_encoder', self.value_loss),
             self.update_network_grads('value_decoder', self.value_loss),
@@ -115,17 +111,18 @@ class EncDec(object):
             })
 
     def value(self, state):
-        return self.s.run(self.value, {
+        return self.s.run(self.state_value, {
             self.state: state,
         })
 
-    def update_gradients(self, R, s, a):
+    def update_gradients(self, s, a, R):
+        print (R,)
         self.s.run(self.update_actor_grads, {
-            self.state: state,
+            self.state: s,
             self.chosen_action_id: a,
-            self.reward: R
+            self.reward: R,
         })
         self.s.run(self.update_value_grads, {
-            self.state: state,
-            self.reward: R
+            self.state: s,
+            self.reward: R,
         })

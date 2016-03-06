@@ -34,14 +34,16 @@ def bytes_to_nps(b):
     n_arrays = int(memfile.readline())
     return [np.load(memfile) for _ in range(n_arrays)]
 
-def init_experiment(settings, session, record=False):
-    simulator_class = import_class(settings['simulator']['class'])
-    simulator       = simulator_class(settings['simulator']['settings'], record)
+def init_experiment(settings, session):
+    def make_simulator(record=False):
+        simulator_class = import_class(settings['simulator']['class'])
+        simulator       = simulator_class(settings['simulator']['settings'], record)
+        return simulator
 
     model_class = import_class(settings['model']['class'])
     model       = model_class(settings['model']['settings'], session)
 
-    return model, simulator
+    return model, make_simulator
 
 def make_session(max_cpu_cores=None):
     """Makes a multi-core session.

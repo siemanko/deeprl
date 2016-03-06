@@ -8,9 +8,9 @@ class Simulator(...):
         record=True means that entire execution should be recorded
     def get_state(self) -> STATE
         return current simulator state
+        when the execution finished it should return None
     def take_action(self, a) -> REWARD
         take action a, also update state to next state and return reward
-        when the execution finished it should return None
     def evaluation_metrics(self):
         returns a dictionary of pairs metric_name:metric_value
         where metric_name is a string and metric_value is a float

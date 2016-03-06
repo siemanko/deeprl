@@ -1,6 +1,8 @@
 {
     "training": {
-         "num_workers": 1
+         "num_workers": 1,
+         "steps_before_update": 5,
+         "gamma": 0.9
     },
     "simulator": {
         "class": "deeprl.simulator.colliding_marbles.KarpathyGame",

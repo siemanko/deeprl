@@ -9,7 +9,7 @@ class Model(...):
     def action(self, STATE) -> ACTION
     def value(self, STATE) -> NUMBER
 
-    def update_gradients(self, R, s, a) -> None
+    def update_gradients(self, s, a, R) -> None
 
     def variables(self)
     def gradients(self)
