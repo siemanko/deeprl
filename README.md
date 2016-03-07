@@ -17,3 +17,5 @@ Command line utilities
 ## Future work
 
 - evalution metrics stored in relative experiment time
+- add exploration schedules
+- use as part of alphago
