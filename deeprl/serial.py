@@ -54,16 +54,17 @@ def serial_mode(settings):
 
     while True:
         simulator = make_simulator()
-        state = simulator.get_state()
+        state = simulator.observe()
         while state is not None:
             transitions = []
             for _ in range(steps_before_update):
                 action = model.action(state)
-                reward = simulator.take_action(action)
+                reward = simulator.act(action)
                 transitions.append((state, action, reward))
 
-                state = simulator.get_state()
-                if state is None: break
+                state = simulator.observe()
+                if simulator.is_terminal():
+                    break
             value = model.value(state) if state is not None else np.array([0.0,])
             for s, a, r in reversed(transitions):
                 value = r + gamma * value

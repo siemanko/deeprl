@@ -11,41 +11,41 @@
          "runs_per_evaluation": 3
     },
     "simulator": {
-        "class": "deeprl.simulator.colliding_marbles.KarpathyGame",
+        "class": "simzoo.colliding_marbles.KarpathyGame",
         "settings": {
-          "fps": 30,
-          "frames_between_actions": 3,
-          "max_frames": 600,
-          "size": 500,
-          "colors": {
-              "hero": "yellow",
-              "red":  "red",
-              "green": "green"
-          },
-          "restitution": 0.95,
-          "viscosity": 1.0,
-          "observable_distance": 0.25,
-          "num_observation_lines": 32,
-          "observable_objects": [
-              "red",
-              "green"
-          ],
-          "num_objects": {
-              "red":   15,
-              "green": 15
-          },
-          "object_reward": {
-              "red":    1,
-              "green": -1
-          },
-          "action_acc": [
-              [0.0,    0.0],
-              [-0.1,   0.0],
-              [0.1,    0.0],
-              [0.0,   -0.1],
-              [0.0,    0.1]
-          ],
-          "obj_radius": 0.03
+            "fps": 30,
+            "frames_between_actions": 3,
+            "max_frames": 600,
+            "size": 500,
+            "colors": {
+                "hero": "yellow",
+                "red":  "red",
+                "green": "green"
+            },
+            "restitution": 0.95,
+            "viscosity": 1.0,
+            "observable_distance": 0.25,
+            "num_observation_lines": 32,
+            "observable_objects": [
+                "red",
+                "green"
+            ],
+            "num_objects": {
+                "red":   15,
+                "green": 15
+            },
+            "object_reward": {
+                "red":    1,
+                "green": -1
+            },
+            "action_acc": [
+                [0.0,    0.0],
+                [-0.1,   0.0],
+                [0.1,    0.0],
+                [0.0,   -0.1],
+                [0.0,    0.1]
+            ],
+            "obj_radius": 0.03
         }
     },
     "model": {
