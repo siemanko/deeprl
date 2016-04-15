@@ -5,16 +5,17 @@
 TODO
 
 ## Available algorithms
-    | Algorithm                                                          | Repository  | Example json  | Documentation |
-    | -------------------------------------------------------------------|-------------|---------------|---------------|
-    | [Discrete DeepQ](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)   | deeprl      | TODO          | TODO          |
-    | [Asynchronous DeepQ](http://arxiv.org/abs/1602.01783) (soon)       | deeprl      | TODO          | TODO          |
+
+| Algorithm                                                          | Repository  | Example json  | Documentation |
+| ------------------------------------------------------------------ | ----------- | ------------- | --------------|
+| [Discrete DeepQ](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)   | deeprl      | TODO          | TODO          |
+| [Asynchronous DeepQ](http://arxiv.org/abs/1602.01783) (soon)       | deeprl      | TODO          | TODO          |
 
 ## Available Simulators
 
-    | Algorithm                                                          | Repository  | Example json  | Documentation |
-    | -------------------------------------------------------------------|-------------|---------------|---------------|
-    | Karpathy Game                                                      | deeprl      | TODO          | TODO          |
+| Algorithm                                                          | Repository  | Example json  | Documentation |
+| -------------------------------------------------------------------|-------------|---------------|---------------|
+| Karpathy Game                                                      | SimulatorZoo| TODO          | TODO          |
 
 ## Requirements
 
