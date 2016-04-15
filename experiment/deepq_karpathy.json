@@ -21,7 +21,7 @@
     "system": {
          "time_between_evaluations": 120,
          "runs_per_evaluation": 3,
-         "time_between_model_save": 120,
+         "time_between_model_saves": 120,
          "keep_old_model_saves": false
     },
     "simulator": {

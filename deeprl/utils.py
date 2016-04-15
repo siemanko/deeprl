@@ -1,5 +1,6 @@
-import tensorflow as tf
+import json
 import os
+import tensorflow as tf
 
 def import_class(path):
     path_split = path.split('.')
@@ -19,6 +20,14 @@ def import_class(path):
         module_or_class = getattr(module_or_class, name)
     return module_or_class
 
+def ensure_json(something):
+    if isinstance(something, str):
+        with open(something, "rt") as f:
+            return json.load(f)
+    elif hasattr(something, "read"):
+        return json.load(something)
+    else:
+        return something
 
 def nps_to_bytes(arrays):
     memfile = BytesIO()
