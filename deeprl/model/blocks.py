@@ -3,6 +3,7 @@ import tensorflow as tf
 
 
 from deeprl.utils import import_class
+from .utils import base_name, copy_variables
 
 
 def parse_block(settings):
@@ -105,11 +106,25 @@ class MLP(object):
                 for l_idx, (h_from, h_to) in enumerate(zip(hiddens[:-1], hiddens[1:])):
                     self.layers.append(Layer(h_from, h_to, scope="hidden_layer_%d" % (l_idx,)))
 
-    def input_placeholder(self):
+    def batch_inputs(self, inputs_list):
+        assert len(self.input_sizes) == 0, \
+            "Multi-input batching not supported yet. Contribute?"
+
+        batched = np.empty(len(inputs_list), self.input_sizes[0])
+        for i, ipt in enumerate(inputs_list):
+            batched[i] = 0 if ipt is None else ipt
+        return batched
+
+
+    def input_placeholder(self, name=None):
         if len(self.input_sizes) == 1:
-            return tf.placeholder(tf.float32, (None, self.input_sizes[0]))
+            return tf.placeholder(tf.float32, (None, self.input_sizes[0]), name=name)
         else:
-            return [tf.placeholder(tf.float32, (None, ins)) for ins in self.input_sizes]
+            return [tf.placeholder(tf.float32, (None, ins))
+                    for ins in self.input_sizes]
+
+    def output_shape(self):
+        return (None, self.hiddens[-1],)
 
     def __call__(self, xs):
         if type(xs) != list:

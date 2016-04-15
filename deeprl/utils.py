@@ -38,17 +38,6 @@ def ensure_directory(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-def init_experiment(settings, session):
-    def make_simulator(record=False):
-        simulator_class = import_class(settings['simulator']['class'])
-        simulator       = simulator_class(settings['simulator']['settings'], record)
-        return simulator
-
-    model_class = import_class(settings['model']['class'])
-    model       = model_class(settings['model']['settings'], session)
-
-    return model, make_simulator
-
 def make_session(max_cpu_cores=None):
     """Makes a multi-core session.
     If max_cpu_cores is None, it adopts the number of cores

@@ -1,0 +1,65 @@
+{
+    "algorithm": {
+        "class": "deeprl.algorithm.discrete_deepq.DiscreteDeepQ",
+        "settings": {
+            "gamma": 0.9,
+            "model": {
+                "class": "MLP",
+                "input_sizes": [192],
+                "hiddens":     [100, 5],
+                "nonlinearities": ["sigmoid", "identity"],
+                "scope": "q_network"
+            },
+            "optimizer": {
+                "class": "GradientDescentOptimizer",
+                "kwargs": {
+                    "learning_rate": 0.005
+                }
+            }
+        }
+    },
+    "system": {
+         "time_between_evaluations": 120,
+         "runs_per_evaluation": 3,
+         "time_between_model_save": 120,
+         "keep_old_model_saves": false
+    },
+    "simulator": {
+        "class": "simzoo.colliding_marbles.KarpathyGame",
+        "settings": {
+            "fps": 30,
+            "frames_between_actions": 3,
+            "max_frames": 600,
+            "size": 500,
+            "colors": {
+                "hero": "yellow",
+                "red":  "red",
+                "green": "green"
+            },
+            "restitution": 0.95,
+            "viscosity": 1.0,
+            "observable_distance": 0.25,
+            "num_observation_lines": 32,
+            "observable_objects": [
+                "red",
+                "green"
+            ],
+            "num_objects": {
+                "red":   15,
+                "green": 15
+            },
+            "object_reward": {
+                "red":    1,
+                "green": -1
+            },
+            "action_acc": [
+                [0.0,    0.0],
+                [-0.1,   0.0],
+                [0.1,    0.0],
+                [0.0,   -0.1],
+                [0.0,    0.1]
+            ],
+            "obj_radius": 0.03
+        }
+    }
+}

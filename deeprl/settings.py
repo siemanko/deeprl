@@ -1,8 +1,3 @@
-DEFAULT_SETTINGS = {
-    'queues': {
-        'type': 'process'
-    }
-}
 
 def update_settings(original, updates, key_name="settings"):
     # if one piece is undefined return the other
